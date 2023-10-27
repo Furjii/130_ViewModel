@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -35,7 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +61,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background
                 ) {
                     TampilLayout()
+                    Register()
                 }
             }
         }
@@ -88,6 +93,27 @@ fun SelectJK(
 
 }
 
+@Composable
+fun Register(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24),
+            contentDescription = null,
+            modifier = Modifier.size(35.dp)
+        )
+        Text(
+            text = "Register", fontSize = 35.sp, fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.padding(10.dp))
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
@@ -95,12 +121,15 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
     var textNama by remember { mutableStateOf("") }
     var textTlp by remember { mutableStateOf("") }
     var textAmt by remember { mutableStateOf("") }
+    var textEma by remember { mutableStateOf("") }
 
 
     val context = LocalContext.current
     val dataForm: DataForm
     val uiState by cobaViewModel.uiState.collectAsState()
     dataForm = uiState
+
+
 
     OutlinedTextField(value = textNama,
         singleLine = true,
@@ -120,6 +149,18 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         onValueChange = {
             textTlp = it
         })
+    OutlinedTextField(value = textEma,
+        singleLine = true,
+        shape = MaterialTheme.shapes.large,
+        modifier = Modifier.fillMaxWidth(),
+        label = { Text(text = "Email") },
+        onValueChange = {
+            textEma = it
+        })
+
+    SelectJK(options = jenis.map { id -> context.resources.getString(id) },
+        oneSelectionChanged = { cobaViewModel.setJenisK(it) })
+
     OutlinedTextField(value = textAmt,
         singleLine = true,
         shape = MaterialTheme.shapes.large,
@@ -128,14 +169,12 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         onValueChange = {
             textAmt = it
         })
-    SelectJK(options = jenis.map { id -> context.resources.getString(id) },
-        oneSelectionChanged = { cobaViewModel.setJenisK(it) })
 
     Button(modifier = Modifier.fillMaxWidth(), onClick = {
-        cobaViewModel.insertData(textNama, textTlp, textAmt, dataForm.sex)
+        cobaViewModel.insertData(textNama, textTlp, textAmt,textEma, dataForm.sex, dataForm.)
     }) {
         Text(
-            text = stringResource(R.string.submit), fontSize = 16.sp
+            text = stringResource(R.string.register), fontSize = 16.sp
         )
     }
     Spacer(modifier = Modifier.height(100.dp))
@@ -143,8 +182,10 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         namanya = cobaViewModel.namaUsr,
         telponnya = cobaViewModel.noTelp,
         alamatnya = cobaViewModel.almatUsr,
+        emailnya = cobaViewModel.emailUsr,
 
         jenisnya = cobaViewModel.jenisKl
+
     )
 }
 
@@ -166,7 +207,7 @@ fun TampilLayout(
 }
 
 @Composable
-fun TextHasil(namanya: String, telponnya: String, alamatnya: String, jenisnya: String) {
+fun TextHasil(namanya: String, telponnya: String, alamatnya: String,emailnya: String, jenisnya: String) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -179,6 +220,10 @@ fun TextHasil(namanya: String, telponnya: String, alamatnya: String, jenisnya: S
         )
         Text(
             text = "Telepon :" + telponnya,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+        )
+        Text(
+            text = "Email :" + emailnya,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
         )
         Text(
@@ -201,5 +246,6 @@ fun Greeting() {
 fun GreetingPreview() {
     Praktikum_5Theme {
         TampilLayout()
+        Register()
     }
 }
