@@ -180,8 +180,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
 
     SelectJK(options = jenis.map { id -> context.resources.getString(id) },
         oneSelectionChanged = { cobaViewModel.setJenisK(it) })
-    SelectST(options = status.map { id -> context.resources.getString(id) },
-        oneSelectionChanged = { cobaViewModel.setStatusT(it) })
+
 
     OutlinedTextField(value = textAmt,
         singleLine = true,
@@ -205,9 +204,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         telponnya = cobaViewModel.noTelp,
         alamatnya = cobaViewModel.almatUsr,
         emailnya = cobaViewModel.emailUsr,
-
-        jenisnya = cobaViewModel.JenisKl
-    )
+        jenisnya = cobaViewModel.jenisKl
 }
 
 @Composable
