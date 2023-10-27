@@ -9,7 +9,7 @@ object DataSource {
     )
 }
 object DataSourcee {
-    val Status = listOf(
+    val status = listOf(
         R.string.belumMenikah,
         R.string.menikah,
     )

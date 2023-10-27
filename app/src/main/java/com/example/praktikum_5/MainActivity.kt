@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.praktikum_5.data.DataForm
 import com.example.praktikum_5.data.DataSource.jenis
+import com.example.praktikum_5.data.DataSourcee.status
 import com.example.praktikum_5.ui.theme.CobaViewModel
 import com.example.praktikum_5.ui.theme.Praktikum_5Theme
 import java.util.Optional
@@ -69,12 +70,26 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
+fun Register(modifier: Modifier = Modifier) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24),
+            contentDescription = null,
+            modifier = Modifier.size(35.dp)
+        )
+        Spacer(modifier = Modifier.padding(3.dp))
+
+        Text(text = "Register", fontSize = 40.sp, fontWeight = FontWeight.Bold)
+    }
+}
+
+@Composable
 fun SelectJK(
     options: List<String>, oneSelectionChanged: (String) -> Unit = {}
 ) {
     var selectedValue by rememberSaveable { mutableStateOf("") }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Row(modifier = Modifier.padding(16.dp)) {
         options.forEach { item ->
             Row(modifier = Modifier.selectable(selected = selectedValue == item, onClick = {
                 selectedValue = item
@@ -94,25 +109,30 @@ fun SelectJK(
 }
 
 @Composable
-fun Register(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.baseline_arrow_back_ios_24),
-            contentDescription = null,
-            modifier = Modifier.size(35.dp)
-        )
-        Text(
-            text = "Register", fontSize = 35.sp, fontWeight = FontWeight.Bold
-        )
+fun SelectST(
+    options: List<String>, oneSelectionChanged: (String) -> Unit = {}
+) {
+    var selectedValue by rememberSaveable { mutableStateOf("") }
 
-        Spacer(modifier = Modifier.padding(10.dp))
+    Row(modifier = Modifier.padding(16.dp)) {
+        options.forEach { item ->
+            Row(modifier = Modifier.selectable(selected = selectedValue == item, onClick = {
+                selectedValue = item
+                oneSelectionChanged(item)
+            }), verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(selected = selectedValue == item, onClick = {
+                    selectedValue = item
+                    oneSelectionChanged(item)
+                })
+                Text(item)
+            }
+
+        }
+
     }
+
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,7 +155,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         singleLine = true,
         shape = MaterialTheme.shapes.large,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Nama Lengkap") },
+        label = { Text(text = "User Name") },
         onValueChange = {
             textNama = it
         })
@@ -145,7 +165,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         shape = MaterialTheme.shapes.large,
         modifier = Modifier.fillMaxWidth(),
-        label = { Text(text = "Nomor Telepon") },
+        label = { Text(text = "Telepon") },
         onValueChange = {
             textTlp = it
         })
@@ -160,6 +180,8 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
 
     SelectJK(options = jenis.map { id -> context.resources.getString(id) },
         oneSelectionChanged = { cobaViewModel.setJenisK(it) })
+    SelectST(options = status.map { id -> context.resources.getString(id) },
+        oneSelectionChanged = { cobaViewModel.setStatusT(it) })
 
     OutlinedTextField(value = textAmt,
         singleLine = true,
@@ -171,7 +193,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         })
 
     Button(modifier = Modifier.fillMaxWidth(), onClick = {
-        cobaViewModel.insertData(textNama, textTlp, textAmt,textEma, dataForm.sex, dataForm.)
+        cobaViewModel.insertData(textNama, textTlp, textAmt, textEma, dataForm.sex)
     }) {
         Text(
             text = stringResource(R.string.register), fontSize = 16.sp
@@ -184,8 +206,7 @@ fun TampilForm(cobaViewModel: CobaViewModel = viewModel()) {
         alamatnya = cobaViewModel.almatUsr,
         emailnya = cobaViewModel.emailUsr,
 
-        jenisnya = cobaViewModel.jenisKl
-
+        jenisnya = cobaViewModel.JenisKl
     )
 }
 
@@ -207,7 +228,14 @@ fun TampilLayout(
 }
 
 @Composable
-fun TextHasil(namanya: String, telponnya: String, alamatnya: String,emailnya: String, jenisnya: String) {
+fun TextHasil(
+    namanya: String,
+    telponnya: String,
+    alamatnya: String,
+    emailnya: String,
+    jenisnya: String,
+    status: String,
+) {
     ElevatedCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -216,24 +244,25 @@ fun TextHasil(namanya: String, telponnya: String, alamatnya: String,emailnya: St
     ) {
         Text(
             text = "Nama :" + namanya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
         )
         Text(
             text = "Telepon :" + telponnya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
         )
         Text(
             text = "Email :" + emailnya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
         )
         Text(
             text = "Alamat :" + alamatnya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
         )
         Text(
             text = "Jenis kelamin : " + jenisnya,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
         )
+
     }
 }
 
